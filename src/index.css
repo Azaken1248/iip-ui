@@ -13,15 +13,24 @@
  * named "canvas", not Catppuccin's own "base" — Tailwind's font-size
  * scale already defines a "base" key, and "text-base" would collide
  * with the built-in font-size utility of the same name.
+ *
+ * Brand accent is Catppuccin's Peach (orange), paired with Green as the
+ * secondary role color — the orange/green/white identity the platform
+ * asked for, rendered through Catppuccin's own swatches rather than
+ * literal convenience-store hex values. Light mode's card surface is
+ * pushed to true white (not Latte's slightly-grey stock Mantle) so the
+ * "white" leg of that identity actually reads as white; dark mode keeps
+ * Mocha's own Mantle since a literal white surface would blow out
+ * dark-theme contrast.
  */
 @theme {
   --color-canvas: #eff1f5; /* base */
-  --color-mantle: #e6e9ef;
+  --color-mantle: #ffffff;
   --color-surface: #ccd0da;
   --color-overlay: #9ca0b0;
   --color-text: #4c4f69;
   --color-subtext: #6c6f85;
-  --color-accent: #8839ef; /* mauve */
+  --color-accent: #fe640b; /* peach */
   --color-info: #1e66f5; /* blue */
   --color-success: #40a02b; /* green */
   --color-warning: #df8e1d; /* yellow */
@@ -35,7 +44,7 @@
   --color-overlay: #6c7086;
   --color-text: #cdd6f4;
   --color-subtext: #a6adc8;
-  --color-accent: #cba6f7; /* mauve */
+  --color-accent: #fab387; /* peach */
   --color-info: #89b4fa; /* blue */
   --color-success: #a6e3a1; /* green */
   --color-warning: #f9e2af; /* yellow */

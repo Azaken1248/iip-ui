@@ -129,70 +129,74 @@ export function InternForm({ onSubmitted }: Props) {
 		<form
 			onSubmit={handleSubmit}
 			noValidate
-			className="rounded-2xl border border-overlay/20 border-t-4 border-t-accent bg-mantle p-5 shadow-sm sm:p-6"
+			className="overflow-hidden rounded-2xl border border-overlay/20 bg-mantle shadow-sm"
 		>
-			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				{FIELDS.map(({ name, label, type, required, icon: Icon, tone }) => (
-					<div key={name}>
-						<label htmlFor={name} className={labelClass}>
-							{label}
-							{required && <span className="text-danger"> *</span>}
-						</label>
-						<div className="relative">
-							<Icon
-								className={`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${tone}`}
-							/>
-							<input
-								id={name}
-								name={name}
-								type={type ?? "text"}
-								value={values[name] ?? ""}
-								onChange={(e) => update(name, e.target.value)}
-								aria-invalid={Boolean(errors[name])}
-								aria-describedby={errors[name] ? `${name}-error` : undefined}
-								className={inputClass}
-							/>
+			<div className="h-1.5 w-full bg-gradient-to-r from-accent via-success to-accent" />
+
+			<div className="p-5 sm:p-6">
+				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+					{FIELDS.map(({ name, label, type, required, icon: Icon, tone }) => (
+						<div key={name}>
+							<label htmlFor={name} className={labelClass}>
+								{label}
+								{required && <span className="text-danger"> *</span>}
+							</label>
+							<div className="relative">
+								<Icon
+									className={`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${tone}`}
+								/>
+								<input
+									id={name}
+									name={name}
+									type={type ?? "text"}
+									value={values[name] ?? ""}
+									onChange={(e) => update(name, e.target.value)}
+									aria-invalid={Boolean(errors[name])}
+									aria-describedby={errors[name] ? `${name}-error` : undefined}
+									className={inputClass}
+								/>
+							</div>
+							{errors[name] && (
+								<p id={`${name}-error`} className="mt-1 text-xs text-danger">
+									{errors[name]}
+								</p>
+							)}
 						</div>
-						{errors[name] && (
-							<p id={`${name}-error`} className="mt-1 text-xs text-danger">
-								{errors[name]}
-							</p>
-						)}
-					</div>
-				))}
-			</div>
-
-			{banner && (
-				<div
-					role="status"
-					className={
-						"mt-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm " +
-						(status === "success" ? "bg-success/15 text-success" : "bg-danger/15 text-danger")
-					}
-				>
-					{status === "success" ? (
-						<CheckCircleIcon className="h-4 w-4 shrink-0" />
-					) : (
-						<WarningCircleIcon className="h-4 w-4 shrink-0" />
-					)}
-					<span>{banner}</span>
+					))}
 				</div>
-			)}
 
-			<button
-				type="submit"
-				disabled={status === "submitting"}
-				className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm
-					font-medium text-canvas shadow-sm transition hover:opacity-90 hover:shadow-md
-					disabled:cursor-not-allowed disabled:opacity-60"
-			>
-				{status === "submitting" ? (
-					<SpinnerIcon className="h-4 w-4 animate-spin" />
-				) : (
-					<PaperPlaneTiltIcon className="h-4 w-4" />
+				{banner && (
+					<div
+						role="status"
+						className={
+							"mt-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm " +
+							(status === "success" ? "bg-success/15 text-success" : "bg-danger/15 text-danger")
+						}
+					>
+						{status === "success" ? (
+							<CheckCircleIcon className="h-4 w-4 shrink-0" />
+						) : (
+							<WarningCircleIcon className="h-4 w-4 shrink-0" />
+						)}
+						<span>{banner}</span>
+					</div>
 				)}
-				Submit intern
-			</button>
+
+				<button
+					type="submit"
+					disabled={status === "submitting"}
+					className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm
+						font-medium text-canvas shadow-sm transition hover:opacity-90 hover:shadow-md
+						disabled:cursor-not-allowed disabled:opacity-60"
+				>
+					{status === "submitting" ? (
+						<SpinnerIcon className="h-4 w-4 animate-spin" />
+					) : (
+						<PaperPlaneTiltIcon className="h-4 w-4" />
+					)}
+					Submit intern
+				</button>
+			</div>
 		</form>
 	);
 }

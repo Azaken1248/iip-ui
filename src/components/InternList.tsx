@@ -95,7 +95,7 @@ export function InternList({ refreshKey }: Props) {
 					<div className="flex items-start justify-between gap-2">
 						<div className="flex items-center gap-3">
 							<div
-								className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-canvas ${avatarTone(intern.internId)}`}
+								className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-canvas ring-2 ring-canvas ${avatarTone(intern.internId)}`}
 							>
 								{initials(intern.firstName, intern.lastName)}
 							</div>
