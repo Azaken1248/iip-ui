@@ -1,1 +1,47 @@
 @import "tailwindcss";
+
+/* Manual dark-mode toggle (not just OS preference): applies dark: variants
+   whenever an ancestor carries the .dark class. Toggled by ThemeToggle. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Catppuccin (https://catppuccin.com) — Latte for light mode, Mocha for
+ * dark. 11 semantic tokens: 6 neutrals (canvas/mantle/surface/overlay/
+ * text/subtext) + 5 roles (accent/info/success/warning/danger), mapped
+ * onto Catppuccin's own named colors so the palette stays recognizably
+ * "Catppuccin" rather than an arbitrary reskin. The main background is
+ * named "canvas", not Catppuccin's own "base" — Tailwind's font-size
+ * scale already defines a "base" key, and "text-base" would collide
+ * with the built-in font-size utility of the same name.
+ */
+@theme {
+  --color-canvas: #eff1f5; /* base */
+  --color-mantle: #e6e9ef;
+  --color-surface: #ccd0da;
+  --color-overlay: #9ca0b0;
+  --color-text: #4c4f69;
+  --color-subtext: #6c6f85;
+  --color-accent: #8839ef; /* mauve */
+  --color-info: #1e66f5; /* blue */
+  --color-success: #40a02b; /* green */
+  --color-warning: #df8e1d; /* yellow */
+  --color-danger: #d20f39; /* red */
+}
+
+.dark {
+  --color-canvas: #1e1e2e; /* base */
+  --color-mantle: #181825;
+  --color-surface: #313244;
+  --color-overlay: #6c7086;
+  --color-text: #cdd6f4;
+  --color-subtext: #a6adc8;
+  --color-accent: #cba6f7; /* mauve */
+  --color-info: #89b4fa; /* blue */
+  --color-success: #a6e3a1; /* green */
+  --color-warning: #f9e2af; /* yellow */
+  --color-danger: #f38ba8; /* red */
+}
+
+body {
+  @apply bg-canvas text-text transition-colors duration-200;
+}
