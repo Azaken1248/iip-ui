@@ -1,6 +1,6 @@
 # IIP — Web UI
 
-React + TypeScript + Tailwind front end for the Intern Integration Platform — one of the sibling repos that make up the platform (see [`docs`](../docs) for architecture, use cases, data model, and the implementation plan).
+React + TypeScript + Tailwind front end for the Intern Integration Platform — one of the sibling repos that make up the platform (see [`docs`](https://github.com/Azaken1248/iip-docs) for architecture, use cases, data model, and the implementation plan).
 
 Deliberately minimal per the architecture doc — this is not where engineering effort goes; it's a thin, validated form over the Source Service's REST API.
 
