@@ -1,7 +1,19 @@
-import { useState, type FormEvent } from "react";
+import { useState, type ComponentType, type FormEvent } from "react";
 import { ApiValidationError, submitIntern } from "../api/interns";
 import type { CreateInternRequest } from "../types";
-import { CheckCircleIcon, SpinnerIcon, WarningCircleIcon } from "./icons";
+import {
+	BriefcaseIcon,
+	CalendarBlankIcon,
+	CheckCircleIcon,
+	EnvelopeSimpleIcon,
+	GraduationCapIcon,
+	IdentificationBadgeIcon,
+	PaperPlaneTiltIcon,
+	SpinnerIcon,
+	UserIcon,
+	UsersThreeIcon,
+	WarningCircleIcon,
+} from "./icons";
 
 const emptyForm: CreateInternRequest = {
 	internId: "",
@@ -32,8 +44,8 @@ function validate(values: CreateInternRequest): Record<string, string> {
 }
 
 const inputClass =
-	"w-full rounded-lg border border-overlay/40 bg-canvas px-3 py-2 text-sm text-text " +
-	"placeholder:text-subtext/60 focus:border-accent focus:outline-none focus:ring-2 " +
+	"w-full rounded-xl border border-overlay/40 bg-canvas py-2.5 pl-10 pr-3 text-sm text-text " +
+	"placeholder:text-subtext/60 transition-colors focus:border-accent focus:outline-none focus:ring-2 " +
 	"focus:ring-accent/30 aria-[invalid=true]:border-danger aria-[invalid=true]:ring-danger/20";
 
 const labelClass = "mb-1 block text-sm font-medium text-subtext";
@@ -43,15 +55,17 @@ const FIELDS: Array<{
 	label: string;
 	type?: string;
 	required?: boolean;
+	icon: ComponentType<{ className?: string }>;
+	tone: string;
 }> = [
-	{ name: "internId", label: "Intern ID", required: true },
-	{ name: "firstName", label: "First name", required: true },
-	{ name: "lastName", label: "Last name", required: true },
-	{ name: "email", label: "Email", type: "email", required: true },
-	{ name: "college", label: "College", required: true },
-	{ name: "department", label: "Department", required: true },
-	{ name: "mentor", label: "Mentor" },
-	{ name: "startDate", label: "Start date", type: "date", required: true },
+	{ name: "internId", label: "Intern ID", required: true, icon: IdentificationBadgeIcon, tone: "text-info" },
+	{ name: "firstName", label: "First name", required: true, icon: UserIcon, tone: "text-accent" },
+	{ name: "lastName", label: "Last name", required: true, icon: UserIcon, tone: "text-accent" },
+	{ name: "email", label: "Email", type: "email", required: true, icon: EnvelopeSimpleIcon, tone: "text-info" },
+	{ name: "college", label: "College", required: true, icon: GraduationCapIcon, tone: "text-success" },
+	{ name: "department", label: "Department", required: true, icon: BriefcaseIcon, tone: "text-warning" },
+	{ name: "mentor", label: "Mentor", icon: UsersThreeIcon, tone: "text-subtext" },
+	{ name: "startDate", label: "Start date", type: "date", required: true, icon: CalendarBlankIcon, tone: "text-warning" },
 ];
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -115,25 +129,30 @@ export function InternForm({ onSubmitted }: Props) {
 		<form
 			onSubmit={handleSubmit}
 			noValidate
-			className="rounded-2xl border border-overlay/20 bg-mantle p-5 shadow-sm sm:p-6"
+			className="rounded-2xl border border-overlay/20 border-t-4 border-t-accent bg-mantle p-5 shadow-sm sm:p-6"
 		>
 			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-				{FIELDS.map(({ name, label, type, required }) => (
+				{FIELDS.map(({ name, label, type, required, icon: Icon, tone }) => (
 					<div key={name}>
 						<label htmlFor={name} className={labelClass}>
 							{label}
 							{required && <span className="text-danger"> *</span>}
 						</label>
-						<input
-							id={name}
-							name={name}
-							type={type ?? "text"}
-							value={values[name] ?? ""}
-							onChange={(e) => update(name, e.target.value)}
-							aria-invalid={Boolean(errors[name])}
-							aria-describedby={errors[name] ? `${name}-error` : undefined}
-							className={inputClass}
-						/>
+						<div className="relative">
+							<Icon
+								className={`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${tone}`}
+							/>
+							<input
+								id={name}
+								name={name}
+								type={type ?? "text"}
+								value={values[name] ?? ""}
+								onChange={(e) => update(name, e.target.value)}
+								aria-invalid={Boolean(errors[name])}
+								aria-describedby={errors[name] ? `${name}-error` : undefined}
+								className={inputClass}
+							/>
+						</div>
 						{errors[name] && (
 							<p id={`${name}-error`} className="mt-1 text-xs text-danger">
 								{errors[name]}
@@ -163,11 +182,15 @@ export function InternForm({ onSubmitted }: Props) {
 			<button
 				type="submit"
 				disabled={status === "submitting"}
-				className="mt-5 inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm
-					font-medium text-canvas transition-opacity hover:opacity-90 disabled:cursor-not-allowed
-					disabled:opacity-60"
+				className="mt-5 inline-flex items-center gap-2 rounded-xl bg-accent px-5 py-2.5 text-sm
+					font-medium text-canvas shadow-sm transition hover:opacity-90 hover:shadow-md
+					disabled:cursor-not-allowed disabled:opacity-60"
 			>
-				{status === "submitting" && <SpinnerIcon className="h-4 w-4 animate-spin" />}
+				{status === "submitting" ? (
+					<SpinnerIcon className="h-4 w-4 animate-spin" />
+				) : (
+					<PaperPlaneTiltIcon className="h-4 w-4" />
+				)}
 				Submit intern
 			</button>
 		</form>
