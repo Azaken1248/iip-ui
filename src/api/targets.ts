@@ -1,7 +1,7 @@
 import type { InternRow, InternSummaryResponse, TargetStatusResponse } from "../types";
 
-const DB_ADAPTER_BASE_URL = import.meta.env.VITE_DB_ADAPTER_BASE_URL ?? "http://localhost:8081";
-const FILE_ADAPTER_BASE_URL = import.meta.env.VITE_FILE_ADAPTER_BASE_URL ?? "http://localhost:8082";
+const DB_ADAPTER_BASE_URL = import.meta.env.VITE_DB_ADAPTER_BASE_URL ?? "https://dbadapter.azaken.com";
+const FILE_ADAPTER_BASE_URL = import.meta.env.VITE_FILE_ADAPTER_BASE_URL ?? "https://fileadapter.azaken.com";
 
 async function getStatus(baseUrl: string): Promise<TargetStatusResponse> {
 	const response = await fetch(`${baseUrl}/admin/status`);
