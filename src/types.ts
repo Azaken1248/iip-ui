@@ -42,3 +42,25 @@ export interface InternSummaryResponse {
 	status: InternStatus;
 	createdAt: string;
 }
+
+// Mirrors db-adapter's/file-adapter's AdminController.AdminStatusResponse.
+export interface TargetStatusResponse {
+	paused: boolean;
+}
+
+// Mirrors file-adapter's CsvInternReader/InternRow -- a raw projection of
+// interns.csv's literal contents, deliberately all strings (not re-parsed
+// into typed fields), matching what's actually in the file.
+export interface InternRow {
+	recordId: string;
+	internId: string;
+	firstName: string;
+	lastName: string;
+	email: string;
+	college: string;
+	department: string;
+	mentor: string;
+	startDate: string;
+	status: string;
+	createdAt: string;
+}
