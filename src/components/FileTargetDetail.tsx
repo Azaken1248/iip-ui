@@ -91,7 +91,7 @@ export function FileTargetDetail({ status, busy, onPauseToggle, onBack }: Props)
 			) : (
 				<div className="mt-4 overflow-hidden rounded-2xl border border-overlay/20 shadow-sm">
 					<div className="overflow-x-auto">
-						<table className="border-collapse text-xs">
+						<table className="w-full border-collapse text-xs">
 							<thead>
 								<tr>
 									<th className="sticky left-0 z-10 border border-overlay/30 bg-surface px-2 py-1.5 text-center font-semibold text-subtext">
