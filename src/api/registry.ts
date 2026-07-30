@@ -1,4 +1,9 @@
-import type { AdapterTypeDescriptor, ContractDefinition, RegistryProblemResponse } from "../types";
+import type {
+	AdapterTypeDescriptor,
+	Attachment,
+	ContractDefinition,
+	RegistryProblemResponse,
+} from "../types";
 
 // The control plane. A fourth backend rather than a path on the source
 // service, because defining a schema and submitting a record against it are
@@ -75,6 +80,55 @@ export async function registerContract(
 
 export async function listAdapterTypes(): Promise<AdapterTypeDescriptor[]> {
 	const response = await fetch(`${REGISTRY_BASE_URL}/adapter-types`);
+	if (!response.ok) throw await readError(response);
+	return response.json();
+}
+
+/** Everything a contract fans out to, including paused targets (Phase 6.6). */
+export async function listAttachments(contractId: string): Promise<Attachment[]> {
+	const response = await fetch(
+		`${REGISTRY_BASE_URL}/contracts/${encodeURIComponent(contractId)}/adapters`,
+	);
+	if (!response.ok) throw await readError(response);
+	return response.json();
+}
+
+/** UC-14: attach an adapter. One insert, no build, no redeploy. */
+export async function createAttachment(
+	contractId: string,
+	adapterType: string,
+	config: Record<string, unknown>,
+): Promise<Attachment> {
+	const response = await fetch(
+		`${REGISTRY_BASE_URL}/contracts/${encodeURIComponent(contractId)}/adapters`,
+		{
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ adapterType, config }),
+		},
+	);
+	if (!response.ok) throw await readError(response);
+	return response.json();
+}
+
+/**
+ * UC-12's pause switch. A flag rather than a delete, so the configuration
+ * survives the pause and resuming is one click rather than filling the form in
+ * again from memory.
+ */
+export async function setAttachmentEnabled(
+	contractId: string,
+	attachmentId: string,
+	enabled: boolean,
+): Promise<Attachment> {
+	const response = await fetch(
+		`${REGISTRY_BASE_URL}/contracts/${encodeURIComponent(contractId)}/adapters/${attachmentId}`,
+		{
+			method: "PATCH",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({ enabled }),
+		},
+	);
 	if (!response.ok) throw await readError(response);
 	return response.json();
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { listContracts } from "../api/registry";
 import type { ContractDefinition } from "../types";
+import { AttachmentsPanel } from "./AttachmentsPanel";
 import { ContractForm } from "./ContractForm";
 import { SpinnerIcon, WarningCircleIcon } from "./icons";
 
@@ -91,6 +92,7 @@ export function ContractsPage() {
 									</span>
 								))}
 							</div>
+							<AttachmentsPanel contractId={contract.contractId} />
 						</article>
 					))}
 				</div>

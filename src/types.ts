@@ -119,3 +119,12 @@ export interface AdapterConfigField {
 	default?: string;
 	itemFields?: AdapterConfigField[];
 }
+
+/** One row of adapter_attachments: "this contract fans out to that target". */
+export interface Attachment {
+	attachmentId: string;
+	contractId: string;
+	adapterType: string;
+	config: Record<string, unknown>;
+	enabled: boolean;
+}
