@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ContractsPage } from "./components/ContractsPage";
 import { InternForm } from "./components/InternForm";
 import { InternList } from "./components/InternList";
 import { TargetsPage } from "./components/TargetsPage";
@@ -6,7 +7,7 @@ import { ThemeToggle } from "./components/ThemeToggle";
 import { ViewToggle } from "./components/ViewToggle";
 import { useViewMode } from "./hooks/useViewMode";
 
-type Page = "submit" | "targets";
+type Page = "submit" | "contracts" | "targets";
 
 function App() {
 	const [page, setPage] = useState<Page>("submit");
@@ -32,6 +33,16 @@ function App() {
 							</button>
 							<button
 								type="button"
+								onClick={() => setPage("contracts")}
+								className={
+									"rounded-md px-3 py-1.5 text-sm font-medium transition-colors " +
+									(page === "contracts" ? "bg-accent text-canvas" : "text-subtext hover:text-text")
+								}
+							>
+								Contracts
+							</button>
+							<button
+								type="button"
 								onClick={() => setPage("targets")}
 								className={
 									"rounded-md px-3 py-1.5 text-sm font-medium transition-colors " +
@@ -47,7 +58,9 @@ function App() {
 			</header>
 
 			<main className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-8">
-				{page === "submit" ? (
+				{page === "contracts" ? (
+					<ContractsPage />
+				) : page === "submit" ? (
 					<div className="flex flex-col gap-8 lg:flex-row lg:items-start">
 						<section className="lg:w-[420px] lg:shrink-0">
 							<h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-subtext">
