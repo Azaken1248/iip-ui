@@ -128,3 +128,14 @@ export interface Attachment {
 	config: Record<string, unknown>;
 	enabled: boolean;
 }
+
+/** A record in envelope shape, as the source service and adapters return it. */
+export interface RecordView {
+	recordId: string;
+	contractId?: string;
+	recordType?: string | null;
+	schemaVersion?: number;
+	naturalKey?: string | null;
+	occurredAt?: string;
+	payload: Record<string, unknown>;
+}

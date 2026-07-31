@@ -1,6 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { dbTarget } from "../api/targets";
-import type { InternSummaryResponse, TargetStatusResponse } from "../types";
+import type { RecordView, TargetStatusResponse } from "../types";
+
+/**
+ * A record with its payload flattened alongside its id, which is the shape this
+ * table has always drawn. Indexed rather than declared field by field, because
+ * the payload's fields belong to a contract and this component is not entitled
+ * to a fixed list of them.
+ */
+type FlattenedRecord = Record<string, string | undefined> & { recordId: string };
 import { DatabaseIcon, MagnifyingGlassIcon, WarningCircleIcon } from "./icons";
 import { TargetDetailHeader } from "./TargetDetailHeader";
 
@@ -18,14 +26,18 @@ const statusBadgeClass: Record<string, string> = {
 };
 
 export function DatabaseTargetDetail({ status, busy, onPauseToggle, onBack }: Props) {
-	const [interns, setInterns] = useState<InternSummaryResponse[]>([]);
+	// The Targets page is an operator view of one deployment, and interns is
+	// the contract this deployment has always had a shaped table for. Phase 6.9
+	// generalises the *endpoint*; which contract this panel shows is a question
+	// for the page, and naming one here keeps the change to what changed.
+	const [records, setRecords] = useState<RecordView[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [search, setSearch] = useState("");
 
 	const refresh = useCallback(async () => {
 		try {
-			setInterns(await dbTarget.listInterns());
+			setRecords(await dbTarget.listRecords("interns"));
 			setError(null);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Failed to load data.");
@@ -40,14 +52,36 @@ export function DatabaseTargetDetail({ status, busy, onPauseToggle, onBack }: Pr
 		return () => clearInterval(interval);
 	}, [refresh]);
 
+	// The endpoint returns envelope-shaped records now (Phase 6.9), so the
+	// payload is flattened back out here rather than through the whole table.
+	// This panel still shows interns' columns, which is correct for what it is:
+	// an operator's view of the shaped target this deployment actually has, not
+	// a generic records browser -- that is the Submit page.
+	const rows = useMemo<FlattenedRecord[]>(
+		() =>
+			records.map((record) => ({
+				...(record.payload as Record<string, string | undefined>),
+				recordId: record.recordId,
+			})),
+		[records],
+	);
+
 	const filtered = useMemo(() => {
 		const query = search.trim().toLowerCase();
-		if (!query) return interns;
-		return interns.filter((intern) =>
-			[intern.internId, intern.firstName, intern.lastName, intern.email, intern.college, intern.department, intern.mentor ?? "", intern.status]
-				.some((field) => field.toLowerCase().includes(query)),
+		if (!query) return rows;
+		return rows.filter((intern) =>
+			[
+				intern.internId,
+				intern.firstName,
+				intern.lastName,
+				intern.email,
+				intern.college,
+				intern.department,
+				intern.mentor,
+				intern.status,
+			].some((field) => String(field ?? "").toLowerCase().includes(query)),
 		);
-	}, [interns, search]);
+	}, [rows, search]);
 
 	return (
 		<div>
@@ -81,7 +115,7 @@ export function DatabaseTargetDetail({ status, busy, onPauseToggle, onBack }: Pr
 				</div>
 			) : filtered.length === 0 ? (
 				<p className="mt-4 text-sm text-subtext">
-					{interns.length === 0 ? "No rows in the database yet." : "No records match your search."}
+					{rows.length === 0 ? "No rows in the database yet." : "No records match your search."}
 				</p>
 			) : (
 				<div className="mt-4 overflow-hidden rounded-2xl border border-overlay/20 bg-mantle shadow-sm">
@@ -116,7 +150,7 @@ export function DatabaseTargetDetail({ status, busy, onPauseToggle, onBack }: Pr
 											<span
 												className={
 													"inline-block rounded-full px-2 py-0.5 text-xs font-medium " +
-													(statusBadgeClass[intern.status] ?? "bg-overlay/20 text-subtext")
+													(statusBadgeClass[intern.status ?? ""] ?? "bg-overlay/20 text-subtext")
 												}
 											>
 												{intern.status}

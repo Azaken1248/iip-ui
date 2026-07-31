@@ -1,18 +1,13 @@
 import { useState } from "react";
 import { ContractsPage } from "./components/ContractsPage";
-import { InternForm } from "./components/InternForm";
-import { InternList } from "./components/InternList";
+import { SubmitPage } from "./components/SubmitPage";
 import { TargetsPage } from "./components/TargetsPage";
 import { ThemeToggle } from "./components/ThemeToggle";
-import { ViewToggle } from "./components/ViewToggle";
-import { useViewMode } from "./hooks/useViewMode";
 
 type Page = "submit" | "contracts" | "targets";
 
 function App() {
 	const [page, setPage] = useState<Page>("submit");
-	const [refreshKey, setRefreshKey] = useState(0);
-	const { viewMode, setViewMode } = useViewMode();
 
 	return (
 		<div className="min-h-svh bg-canvas text-text">
@@ -61,24 +56,7 @@ function App() {
 				{page === "contracts" ? (
 					<ContractsPage />
 				) : page === "submit" ? (
-					<div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-						<section className="lg:w-[420px] lg:shrink-0">
-							<h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-subtext">
-								Submit a new intern
-							</h2>
-							<InternForm onSubmitted={() => setRefreshKey((key) => key + 1)} />
-						</section>
-
-						<section className="min-w-0 flex-1">
-							<div className="mb-4 flex items-center justify-between gap-4">
-								<h2 className="text-sm font-semibold uppercase tracking-wide text-subtext">
-									Submitted interns
-								</h2>
-								<ViewToggle viewMode={viewMode} onChange={setViewMode} />
-							</div>
-							<InternList refreshKey={refreshKey} viewMode={viewMode} />
-						</section>
-					</div>
+					<SubmitPage />
 				) : (
 					<section>
 						<h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-subtext">

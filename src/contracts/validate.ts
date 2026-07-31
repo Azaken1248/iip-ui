@@ -6,7 +6,7 @@ const CONTRACT_ID = /^[a-z][a-z0-9-]*$/;
 /**
  * Mirrors the registry's `ContractDocumentValidator`, so a client-side catch
  * and a server-side 400 read identically to the person filling the form — the
- * same reasoning `InternForm` already follows for the submission form.
+ * same reasoning the submission form follows against the source service.
  *
  * <p>Deliberately a mirror rather than the authority. The registry validates
  * every document regardless of who sent it, and it has to: this file is one

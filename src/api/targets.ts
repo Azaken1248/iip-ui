@@ -1,4 +1,4 @@
-import type { InternRow, InternSummaryResponse, TargetStatusResponse } from "../types";
+import type { InternRow, RecordView, TargetStatusResponse } from "../types";
 
 const DB_ADAPTER_BASE_URL = import.meta.env.VITE_DB_ADAPTER_BASE_URL ?? "https://dbadapter.azaken.com";
 const FILE_ADAPTER_BASE_URL = import.meta.env.VITE_FILE_ADAPTER_BASE_URL ?? "https://fileadapter.azaken.com";
@@ -26,9 +26,16 @@ export const dbTarget = {
 	getStatus: () => getStatus(DB_ADAPTER_BASE_URL),
 	pause: () => pause(DB_ADAPTER_BASE_URL),
 	resume: () => resume(DB_ADAPTER_BASE_URL),
-	async listInterns(): Promise<InternSummaryResponse[]> {
-		const response = await fetch(`${DB_ADAPTER_BASE_URL}/interns`);
-		if (!response.ok) throw new Error(`Failed to load interns (HTTP ${response.status})`);
+	/**
+	 * Phase 6.9: the db-adapter's read endpoint takes a contract now. It used to
+	 * be `/interns`, which could only ever show one contract -- so a platform
+	 * that accepts a new contract at runtime had nowhere to display its records.
+	 */
+	async listRecords(contractId: string): Promise<RecordView[]> {
+		const response = await fetch(
+			`${DB_ADAPTER_BASE_URL}/records?contractId=${encodeURIComponent(contractId)}`,
+		);
+		if (!response.ok) throw new Error(`Failed to load records (HTTP ${response.status})`);
 		return response.json();
 	},
 };
