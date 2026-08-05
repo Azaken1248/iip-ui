@@ -107,6 +107,12 @@ export interface AdapterTypeDescriptor {
 	configFields?: AdapterConfigField[];
 	registeredAt?: string;
 	updatedAt?: string;
+	/**
+	 * The type is in the catalog but its adapter has stopped announcing itself,
+	 * so nothing is listening. Derived by the registry from `updatedAt`, not
+	 * stored — a type is only ever as fresh as its last heartbeat.
+	 */
+	stale?: boolean;
 }
 
 export interface AdapterConfigField {

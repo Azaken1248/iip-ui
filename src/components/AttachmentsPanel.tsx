@@ -19,11 +19,20 @@ const inputClass =
  * one (UC-12).
  *
  * <p>Every input below is drawn from the catalog rather than written here. The
- * type list is what is deployed and running; each type's fields are what that
- * adapter published about itself in Phase 6.1. Nothing in this file names
- * postgres, csv or webhook, which is what makes UC-9's "a new adapter type
- * needs no UI change" true rather than aspirational — the webhook adapter was
- * built after this component and appears in it without a line changing.
+ * type list is everything that has ever registered itself, and each type's
+ * fields are what that adapter published about itself in Phase 6.1. Nothing in
+ * this file names postgres, csv or webhook, which is what makes UC-9's "a new
+ * adapter type needs no UI change" true rather than aspirational — the webhook
+ * adapter was built after this component and appears in it without a line
+ * changing.
+ *
+ * <p>Registered is not the same as running, which is why `stale` is shown below
+ * rather than filtered out. This panel offered webhook for five days after a
+ * single local run of that adapter, and attaching to it would have succeeded
+ * and then dropped every record on the floor. Hiding stale types would instead
+ * have made the paused-adapter case look like the type had been deleted, so the
+ * choice here is to say so and still let it be attached — a target configured
+ * ahead of its adapter starting is a legitimate thing to want.
  */
 export function AttachmentsPanel({ contractId }: { contractId: string }) {
 	const [types, setTypes] = useState<AdapterTypeDescriptor[] | null>(null);
@@ -111,6 +120,18 @@ export function AttachmentsPanel({ contractId }: { contractId: string }) {
 							<code className="ml-2 break-all text-xs text-subtext">
 								{summarise(attachment.config)}
 							</code>
+							{/*
+							 * The expensive case. An enabled attachment reads as
+							 * working, so an adapter that is simply not running is
+							 * indistinguishable from one that is delivering -- the
+							 * records are published either way and the contract's
+							 * offsets move on without them.
+							 */}
+							{isStale(types, attachment.adapterType) && attachment.enabled && (
+								<span className="ml-2 inline-flex items-center gap-1 rounded-md border border-warning/50 px-1.5 py-0.5 text-[11px] font-medium text-warning">
+									<WarningCircleIcon className="h-3 w-3" /> adapter not running
+								</span>
+							)}
 						</div>
 						<button
 							type="button"
@@ -164,11 +185,22 @@ export function AttachmentsPanel({ contractId }: { contractId: string }) {
 							{types?.map((type) => (
 								<option key={type.type} value={type.type}>
 									{type.title}
+									{type.stale ? " — not running" : ""}
 								</option>
 							))}
 						</select>
 						{descriptor.description && (
 							<p className="mt-1 text-xs text-subtext/80">{descriptor.description}</p>
+						)}
+						{descriptor.stale && (
+							<p className="mt-1 flex items-start gap-1.5 text-xs text-warning">
+								<WarningCircleIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+								<span>
+									No {descriptor.title} adapter has checked in recently. You can still attach
+									one — records will start flowing when the adapter comes back — but until
+									then nothing is delivered here.
+								</span>
+							</p>
 						)}
 					</div>
 
@@ -220,6 +252,17 @@ export function AttachmentsPanel({ contractId }: { contractId: string }) {
 			)}
 		</div>
 	);
+}
+
+/**
+ * Whether the adapter behind an attachment has stopped announcing itself.
+ *
+ * <p>Unknown counts as fine: while the catalog is loading, and for an
+ * attachment of a type no longer in it at all, the honest answer is "no
+ * evidence" rather than a warning badge the operator cannot act on.
+ */
+function isStale(types: AdapterTypeDescriptor[] | null, adapterType: string): boolean {
+	return types?.find((t) => t.type === adapterType)?.stale === true;
 }
 
 /** Enough of a config to tell two targets of the same type apart. */
